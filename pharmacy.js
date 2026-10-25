@@ -33,12 +33,12 @@ const updateDafalgan = (drug) => {
   drug.decreaseBenefit(drug.isExpired() ? 4 : 2);
 };
 
-const UPDATE_RULES = {
-  "Herbal Tea": updateHerbalTea,
-  Fervex: updateFervex,
-  "Magic Pill": updateMagicPill,
-  Dafalgan: updateDafalgan,
-};
+const UPDATE_RULES = new Map([
+  ["Herbal Tea", updateHerbalTea],
+  ["Fervex", updateFervex],
+  ["Magic Pill", updateMagicPill],
+  ["Dafalgan", updateDafalgan],
+]);
 
 export class Drug {
   constructor(name, expiresIn, benefit) {
@@ -48,7 +48,7 @@ export class Drug {
   }
 
   update() {
-    const updateRule = UPDATE_RULES[this.name] ?? updateDefaultDrug;
+    const updateRule = UPDATE_RULES.get(this.name) ?? updateDefaultDrug;
     updateRule(this);
   }
 
@@ -56,15 +56,15 @@ export class Drug {
     return this.expiresIn < 0;
   }
 
-  increaseBenefit(number = 1) {
+  increaseBenefit(amount) {
     if (this.benefit < MAX_BENEFIT) {
-      this.benefit = Math.min(MAX_BENEFIT, this.benefit + number);
+      this.benefit = Math.min(MAX_BENEFIT, this.benefit + amount);
     }
   }
 
-  decreaseBenefit(number = 1) {
+  decreaseBenefit(amount) {
     if (this.benefit > MIN_BENEFIT) {
-      this.benefit = Math.max(MIN_BENEFIT, this.benefit - number);
+      this.benefit = Math.max(MIN_BENEFIT, this.benefit - amount);
     }
   }
 

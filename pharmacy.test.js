@@ -42,6 +42,18 @@ describe("Pharmacy.updateBenefitValue()", () => {
     expect(drugs[0].benefit).toBe(0);
   });
 
+  test("drug named like a built-in object property is updated as a generic drug", () => {
+    const drugs = [new Drug("toString", 10, 7), new Drug("__proto__", 10, 7)];
+    const pharmacy = new Pharmacy(drugs);
+
+    pharmacy.updateBenefitValue();
+
+    expect(drugs).toEqual([
+      new Drug("toString", 9, 6),
+      new Drug("__proto__", 9, 6),
+    ]);
+  });
+
   describe("Herbal Tea (benefit increases over time)", () => {
     test("increases by 1 while under max 50", () => {
       const drugs = [new Drug("Herbal Tea", 5, 10)];
