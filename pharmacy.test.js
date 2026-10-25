@@ -159,6 +159,38 @@ describe("Pharmacy.updateBenefitValue()", () => {
     });
   });
 
+  describe("Dafalgan (benefit decreases twice as fast)", () => {
+    test("benefit decreases by 2 per update and expiresIn decreases by 1", () => {
+      const drugs = [new Drug("Dafalgan", 10, 7)];
+      const pharmacy = new Pharmacy(drugs);
+
+      pharmacy.updateBenefitValue();
+
+      expect(drugs[0].benefit).toBe(5);
+      expect(drugs[0].expiresIn).toBe(9);
+    });
+
+    test("past expiration: benefit decreases by 4 in one update", () => {
+      const drugs = [new Drug("Dafalgan", 0, 5)];
+      const pharmacy = new Pharmacy(drugs);
+
+      pharmacy.updateBenefitValue();
+
+      expect(drugs[0].benefit).toBe(1);
+      expect(drugs[0].expiresIn).toBe(-1);
+    });
+
+    test("benefit never goes below 0", () => {
+      const drugs = [new Drug("Dafalgan", 0, 3)];
+      const pharmacy = new Pharmacy(drugs);
+
+      pharmacy.updateBenefitValue();
+
+      expect(drugs[0].benefit).toBe(0);
+      expect(drugs[0].expiresIn).toBe(-1);
+    });
+  });
+
   test("updates a mixed list of drugs consistently in one pass", () => {
     const drugs = [
       new Drug("Doliprane", 5, 7),
@@ -167,6 +199,8 @@ describe("Pharmacy.updateBenefitValue()", () => {
       new Drug("Fervex", 10, 9),
       new Drug("Fervex", 0, 3),
       new Drug("Ibuprofen", 0, 1),
+      new Drug("Dafalgan", 10, 7),
+      new Drug("Dafalgan", 0, 5),
     ];
 
     const pharmacy = new Pharmacy(drugs);
@@ -179,6 +213,8 @@ describe("Pharmacy.updateBenefitValue()", () => {
       new Drug("Fervex", 9, 11),
       new Drug("Fervex", -1, 0),
       new Drug("Ibuprofen", -1, 0),
+      new Drug("Dafalgan", 9, 5),
+      new Drug("Dafalgan", -1, 1),
     ]);
   });
 });
